@@ -16897,7 +16897,7 @@ GameObject:
   - component: {fileID: 1211163325}
   - component: {fileID: 1211163326}
   - component: {fileID: 1211163327}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17003,13 +17003,13 @@ MonoBehaviour:
   MoveSpeed: 5
   Movement: {x: 0, y: 0}
   RushSpeed: 30
-  RushDistance: 15
+  RushDistance: 5
   Rigidbody2D: {fileID: 0}
-  ColliderTrigger: 0
   Rush: 0
   CurrentRushDistance: 10
   LastMovement: {x: 0, y: 0}
   LastPosition: {x: 0, y: 0}
+  MoveTargetPos: {x: 0, y: 0}
 --- !u!50 &1211163326
 Rigidbody2D:
   serializedVersion: 4
