@@ -35,6 +35,15 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Rush"",
+                    ""type"": ""Button"",
+                    ""id"": ""1a7ce0ef-751a-4b36-9a03-a21900592478"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -92,6 +101,17 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""action"": ""Movememet"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""80c05255-0c77-477a-9f2d-c63e8ff8789a"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Rush"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -113,6 +133,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         // Player_Map
         m_Player_Map = asset.FindActionMap("Player_Map", throwIfNotFound: true);
         m_Player_Map_Movememet = m_Player_Map.FindAction("Movememet", throwIfNotFound: true);
+        m_Player_Map_Rush = m_Player_Map.FindAction("Rush", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -173,11 +194,13 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Player_Map;
     private IPlayer_MapActions m_Player_MapActionsCallbackInterface;
     private readonly InputAction m_Player_Map_Movememet;
+    private readonly InputAction m_Player_Map_Rush;
     public struct Player_MapActions
     {
         private @PlayerAction m_Wrapper;
         public Player_MapActions(@PlayerAction wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movememet => m_Wrapper.m_Player_Map_Movememet;
+        public InputAction @Rush => m_Wrapper.m_Player_Map_Rush;
         public InputActionMap Get() { return m_Wrapper.m_Player_Map; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -190,6 +213,9 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                 @Movememet.started -= m_Wrapper.m_Player_MapActionsCallbackInterface.OnMovememet;
                 @Movememet.performed -= m_Wrapper.m_Player_MapActionsCallbackInterface.OnMovememet;
                 @Movememet.canceled -= m_Wrapper.m_Player_MapActionsCallbackInterface.OnMovememet;
+                @Rush.started -= m_Wrapper.m_Player_MapActionsCallbackInterface.OnRush;
+                @Rush.performed -= m_Wrapper.m_Player_MapActionsCallbackInterface.OnRush;
+                @Rush.canceled -= m_Wrapper.m_Player_MapActionsCallbackInterface.OnRush;
             }
             m_Wrapper.m_Player_MapActionsCallbackInterface = instance;
             if (instance != null)
@@ -197,6 +223,9 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                 @Movememet.started += instance.OnMovememet;
                 @Movememet.performed += instance.OnMovememet;
                 @Movememet.canceled += instance.OnMovememet;
+                @Rush.started += instance.OnRush;
+                @Rush.performed += instance.OnRush;
+                @Rush.canceled += instance.OnRush;
             }
         }
     }
@@ -213,5 +242,6 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
     public interface IPlayer_MapActions
     {
         void OnMovememet(InputAction.CallbackContext context);
+        void OnRush(InputAction.CallbackContext context);
     }
 }
