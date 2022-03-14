@@ -9,8 +9,6 @@ public class PlayerController : MonoBehaviour
     public Vector2 Movement;
     public float RushSpeed;
     public float RushDistance;
-    public PlayerAction PlayerAction;
-    public Rigidbody2D Rigidbody2D;
 
     [Header("Stats")]
     public bool Rush;
@@ -19,72 +17,66 @@ public class PlayerController : MonoBehaviour
     public Vector2 LastPosition;
     public Vector2 MoveTargetPos;
 
+    public Transform SkillParant;
+    public List<BaseSkill> BaseSkills;
+
+    private PlayerAction _pa;
+    private Rigidbody2D _rb;
+
     private void Awake()
     {
-        PlayerAction = new PlayerAction();
-        Rigidbody2D = GetComponent<Rigidbody2D>();
-        PlayerAction.Player_Map.Rush.started += _ =>
-        {
-            
-        };
-        PlayerAction.Player_Map.Rush.performed += _ =>
-        {
-            var hit = Physics2D.Raycast(transform.position, LastMovement, RushDistance, 1 << 0);
-            if (hit)
-            {
-                MoveTargetPos = hit.point;
-            }
-            else
-            {
-                MoveTargetPos = (Vector2)transform.position + LastMovement.normalized * RushDistance;
-            }
-            Rush = true;
-        };
-        PlayerAction.Player_Map.Rush.canceled += _ =>
-        {
-            Rush = false;
-        };
-        CurrentRushDistance = RushDistance;
+        _pa = new PlayerAction();
+        _rb = GetComponent<Rigidbody2D>();
+    }
+
+    private void Start()
+    {
+        var skills = SkillParant.GetComponentsInChildren<BaseSkill>();
+        BaseSkills = new List<BaseSkill>(skills);
     }
 
     private void OnEnable()
     {
-        PlayerAction.Enable();
+        _pa.Enable();
     }
 
     private void OnDisable()
     {
-        PlayerAction.Disable();
+        _pa.Disable();
+    }
+
+    private void Update()
+    {
+        var direction = _pa.Player_Map.Movememet.ReadValue<Vector2>();
+        if (direction != Vector2.zero)
+        {
+            foreach (var e in BaseSkills)
+            {
+                e.Direction = direction;
+           }
+        }
     }
 
     private void FixedUpdate()
     {
-        Movement = PlayerAction.Player_Map.Movememet.ReadValue<Vector2>();
+        Movement = _pa.Player_Map.Movememet.ReadValue<Vector2>();
 
-        if (Rush)
-        {
-            CurrentRushDistance = Vector2.Distance(transform.position, MoveTargetPos);
-            Rigidbody2D.velocity = LastMovement * RushSpeed;
-        }
-        else
-        {
-            Rigidbody2D.velocity = Movement * MoveSpeed;
+        _rb.velocity = Movement * MoveSpeed;
 
-            if (Movement != Vector2.zero)
+        if (Movement != Vector2.zero)
+        {
+            var scale = transform.localScale;
+            if (Movement.x < 0)
             {
-                var scale = transform.localScale;
-                if (Movement.x < 0)
-                {
-                    scale.x = -1;
-                }
-                else
-                {
-                    scale.x = 1;
-                }
-                transform.localScale = scale;
-                LastMovement = Movement;
-                LastPosition = transform.position;
+                scale.x = -1;
             }
+            else
+            {
+                scale.x = 1;
+            }
+            transform.localScale = scale;
+            LastMovement = Movement;
+            LastPosition = transform.position;
         }
     }
 }
