@@ -36,6 +36,7 @@ public class Bullet : MonoBehaviour
         _lastPos = transform.position;
         if (Distance <= 0) Distance = 24;
         TrailRenderer.Clear();
+        TrailRenderer.startColor = new Color(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value);
     }
 
     private void FixedUpdate()
