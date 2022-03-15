@@ -8,6 +8,14 @@ public class Shotgun : BaseSkill
 
     public GameObject Bullet;
 
+    private int[] _damage = new int[]
+    {
+        1,
+        2,
+        3,
+        4
+    };
+
     private float[] _speeds = new float[]
     {
         0.4f,
@@ -20,16 +28,16 @@ public class Shotgun : BaseSkill
     {
         1.2f,
         0.8f,
-        0.6f,
-        0.4f
+        0.3f,
+        0.1f
     };
 
     private int[][] _spreads = new int[][]
     {
-        new int[]{ 0 },
         new int[]{ 0, 3, -3 },
         new int[]{ 0, 3, -3, 7, -7 },
-        new int[]{ 0, 3, -3, 7, -7, 15, -15 }
+        new int[]{ 0, 3, -3, 7, -7, 15, -15 },
+        new int[]{ 0, 3, -3, 7, -7, 15, -15, 30, -30 }
     };
 
     private IEnumerator Start()
@@ -37,7 +45,33 @@ public class Shotgun : BaseSkill
         while (true)
         {
             var level = Level - 1;
-            transform.Rotate(Quaternion.Euler(0, 0, 45).eulerAngles);
+            var nearbies = Physics2D.OverlapCircleAll(transform.position, 12, 1 << 7);
+            if (nearbies.Length != 0)
+            {
+                Collider2D nearby = null;
+                var distance = 0f;
+                foreach(var e in nearbies)
+                {
+                    var currentDist = Vector2.Distance(transform.position, e.transform.position);
+                    if (nearby == null)
+                    {
+                        nearby = e;
+                        distance = currentDist;
+                        continue;
+                    }
+
+                    if (currentDist < distance)
+                    {
+                        nearby = e;
+                    }
+                }
+                transform.right = (nearby.transform.position - transform.position).normalized;
+            }
+            else
+            {
+                transform.right = Direction;
+            }
+
 
             foreach (var e in _spreads[level])
             {
@@ -45,8 +79,10 @@ public class Shotgun : BaseSkill
                 bullet.transform.right = transform.right;
                 bullet.transform.rotation = Quaternion.Euler(0, 0, e) * bullet.transform.rotation;
                 var bulletScr = bullet.GetComponent<Bullet>();
+                bulletScr.Damage = _damage[level];
                 bulletScr.Speed = _speeds[level];
-                bulletScr.Distance = 6;
+                bulletScr.Distance = 0;
+                bulletScr.Passthrough = 10;
             }
 
             yield return new WaitForSeconds(_cooldowns[level]);

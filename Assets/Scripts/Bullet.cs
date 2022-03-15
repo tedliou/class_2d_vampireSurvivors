@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,13 +6,17 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     public float Speed = .6f;
-    public int ReboundCount = 0;
-    public int Distance = 0;
+    public int ReboundCount = 1;
+    public int Passthrough = 1;
+    public float Distance = 0;
+    public int Damage = 0;
 
     private Rigidbody2D _rb;
     private Vector3 _localDirection;
     private string _blockTag = "Block";
-    private int _currentCollisionCount;
+    private string _enemyTag = "Enemy";
+    private int _currentReboundCount;
+    private int _currentPassthroughCount;
     private float _currentDistance;
     private Vector3 _lastPos;
 
@@ -20,7 +25,7 @@ public class Bullet : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _localDirection = transform.right;
         _lastPos = transform.position;
-        if (Distance == 0) Distance = 100;
+        if (Distance == 0) Distance = 24;
     }
 
     private void FixedUpdate()
@@ -37,18 +42,31 @@ public class Bullet : MonoBehaviour
 
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag(_blockTag))
+        if (collision.CompareTag(_blockTag))
         {
-            if (_currentCollisionCount < ReboundCount)
+            if (_currentReboundCount < ReboundCount)
             {
-                _currentCollisionCount++;
-                _localDirection = Vector2.Reflect(transform.right, collision.contacts[0].normal);
+                _currentReboundCount++;
+
+                var hit = Physics2D.Raycast(transform.position, transform.right);
+                _localDirection = Vector2.Reflect(transform.right, hit.normal);
             }
             else
             {
                 Destroy(gameObject);
+            }
+        }
+        else if (collision.CompareTag(_enemyTag))
+        {
+            if (_currentPassthroughCount >= Passthrough)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                _currentPassthroughCount++;
             }
         }
     }
