@@ -40,6 +40,11 @@ public class Shotgun : BaseSkill
         new int[]{ 0, 3, -3, 7, -7, 15, -15, 30, -30 }
     };
 
+    private void Awake()
+    {
+        ObjectPool = new ObjectPool(Bullet, ObjectPoolParant);
+    }
+
     private IEnumerator Start()
     {
         while (true)
@@ -75,14 +80,15 @@ public class Shotgun : BaseSkill
 
             foreach (var e in _spreads[level])
             {
-                var bullet = Instantiate(Bullet, transform.position, Quaternion.identity);
+                var bullet = ObjectPool.Instantiate(transform.position);
                 bullet.transform.right = transform.right;
                 bullet.transform.rotation = Quaternion.Euler(0, 0, e) * bullet.transform.rotation;
                 var bulletScr = bullet.GetComponent<Bullet>();
                 bulletScr.Damage = _damage[level];
                 bulletScr.Speed = _speeds[level];
-                bulletScr.Distance = 0;
+                bulletScr.Distance = 24;
                 bulletScr.Passthrough = 10;
+                bulletScr.Parant = this;
             }
 
             yield return new WaitForSeconds(_cooldowns[level]);

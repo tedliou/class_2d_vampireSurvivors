@@ -29,7 +29,7 @@ public class Shotgun360 : BaseSkill
         1.2f,
         0.8f,
         0.3f,
-        0.1f
+        0.05f
     };
 
     private int[][] _spreads = new int[][]
@@ -40,26 +40,31 @@ public class Shotgun360 : BaseSkill
         new int[]{ 0, 3, -3, 7, -7, 15, -15, 30, -30 }
     };
 
-    private IEnumerator Start()
+    private float _timeDelta;
+
+    private void Awake()
     {
-        while (true)
+        ObjectPool = new ObjectPool(Bullet, ObjectPoolParant);
+    }
+
+    private void FixedUpdate()
+    {
+        _timeDelta += Time.fixedDeltaTime;
+
+        if (_timeDelta >= _cooldowns[Level - 1])
         {
-            var level = Level - 1;
-            transform.Rotate(Quaternion.Euler(0, 0, 45).eulerAngles);
+            _timeDelta = 0;
 
-            foreach (var e in _spreads[level])
-            {
-                var bullet = Instantiate(Bullet, transform.position, Quaternion.identity);
-                bullet.transform.right = transform.right;
-                bullet.transform.rotation = Quaternion.Euler(0, 0, e) * bullet.transform.rotation;
-                var bulletScr = bullet.GetComponent<Bullet>();
-                bulletScr.Damage = _damage[level];
-                bulletScr.Speed = _speeds[level];
-                bulletScr.Distance = 0;
-                bulletScr.Passthrough = 10;
-            }
+            transform.Rotate(Quaternion.Euler(0, 0, 15).eulerAngles);
 
-            yield return new WaitForSeconds(_cooldowns[level]);
+            var bullet = ObjectPool.Instantiate(transform.position);
+            bullet.transform.right = transform.right;
+            var bulletScr = bullet.GetComponent<Bullet>();
+            bulletScr.Damage = _damage[Level - 1];
+            bulletScr.Speed = _speeds[Level - 1];
+            bulletScr.Distance = 24;
+            bulletScr.Passthrough = 10;
+            bulletScr.Parant = this;
         }
     }
 }

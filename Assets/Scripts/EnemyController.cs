@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    public int HP = 100;
+    public int HP = 1000;
     public float Speed = .01f;
 
     private PlayerController _player;

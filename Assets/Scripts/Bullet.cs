@@ -10,22 +10,32 @@ public class Bullet : MonoBehaviour
     public int Passthrough = 1;
     public float Distance = 0;
     public int Damage = 0;
+    public BaseSkill Parant;
+    public TrailRenderer TrailRenderer;
 
     private Rigidbody2D _rb;
     private Vector3 _localDirection;
     private string _blockTag = "Block";
     private string _enemyTag = "Enemy";
+    private float _currentDistance;
     private int _currentReboundCount;
     private int _currentPassthroughCount;
-    private float _currentDistance;
     private Vector3 _lastPos;
 
-    private void Start()
+    private void Awake()
     {
         _rb = GetComponent<Rigidbody2D>();
+    }
+
+    private void OnEnable()
+    {
+        _currentDistance = 0;
+        _currentReboundCount = 0;
+        _currentPassthroughCount = 0;
         _localDirection = transform.right;
         _lastPos = transform.position;
-        if (Distance == 0) Distance = 24;
+        if (Distance <= 0) Distance = 24;
+        TrailRenderer.Clear();
     }
 
     private void FixedUpdate()
@@ -34,7 +44,7 @@ public class Bullet : MonoBehaviour
         _lastPos = transform.position;
         if (_currentDistance > Distance)
         {
-            Destroy(gameObject);
+            Parant.ObjectPool.Destroy(gameObject);
             return;
         }
 
@@ -55,14 +65,14 @@ public class Bullet : MonoBehaviour
             }
             else
             {
-                Destroy(gameObject);
+                Parant.ObjectPool.Destroy(gameObject);
             }
         }
         else if (collision.CompareTag(_enemyTag))
         {
             if (_currentPassthroughCount >= Passthrough)
             {
-                Destroy(gameObject);
+                Parant.ObjectPool.Destroy(gameObject);
             }
             else
             {

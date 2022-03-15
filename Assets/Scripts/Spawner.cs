@@ -13,7 +13,7 @@ public class Spawner : MonoBehaviour
             var enemy = Instantiate(Enemy);
             enemy.transform.position = transform.position + new Vector3(12, 0) * (Random.Range(0, 2) < 1 ? 1 : -1);
             enemy.transform.position = enemy.transform.position + new Vector3(0, 12) * (Random.Range(0, 2) < 1 ? 1 : -1);
-            yield return new WaitForSeconds(.4f);
+            yield return new WaitForSeconds(.5f);
         }
     }
 }
