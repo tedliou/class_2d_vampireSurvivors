@@ -3,14 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
+public class Bullet : Projectile
 {
     public float Speed = .6f;
     public int ReboundCount = 1;
     public int Passthrough = 1;
     public float Distance = 0;
-    public int Damage = 0;
-    public BaseSkill Parant;
+    public Skill Parant;
     public TrailRenderer TrailRenderer;
 
     private Rigidbody2D _rb;

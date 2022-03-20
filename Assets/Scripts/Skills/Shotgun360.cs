@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Shotgun360 : BaseSkill
+public class Shotgun360 : Skill
 {
     [Range(1, 4)] public int Level = 1;
 

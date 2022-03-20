@@ -4,16 +4,32 @@ using UnityEngine;
 
 public class Spawner : MonoBehaviour
 {
+    public int VisibleLimit = 50;
     public GameObject Enemy;
+    public float Interval = .05f;
+    public float Radius = 12;
 
-    private IEnumerator Start()
+    private float _interval;
+
+    private void Update()
     {
-        while (true)
+        if (EnemyController.VisibleEnemies.Count > VisibleLimit)
         {
-            var enemy = Instantiate(Enemy);
-            enemy.transform.position = transform.position + new Vector3(12, 0) * (Random.Range(0, 2) < 1 ? 1 : -1);
-            enemy.transform.position = enemy.transform.position + new Vector3(0, 12) * (Random.Range(0, 2) < 1 ? 1 : -1);
-            yield return new WaitForSeconds(.05f);
+            _interval = Interval;
+            return;
+        }
+
+        _interval += Time.deltaTime;
+        if (_interval > Interval)
+        {
+            _interval = 0;
+
+            var center = transform.position;
+            var angle = Random.Range(0, 360);
+            var x = center.x + Radius * Mathf.Cos(angle * Mathf.PI / 180);
+            var y = center.y + Radius * Mathf.Sin(angle * Mathf.PI / 180);
+            Enemy.transform.position = new Vector3(x, y, center.z);
+            Instantiate(Enemy);
         }
     }
 }

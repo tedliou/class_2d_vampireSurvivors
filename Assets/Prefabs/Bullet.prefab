@@ -146,8 +146,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Speed: 0.6
-  ReboundCount: 2
-  Passthrough: 1
+  ReboundCount: 0
+  Passthrough: 0
   Distance: 0
   Damage: 0
   Parant: {fileID: 0}

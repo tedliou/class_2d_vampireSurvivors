@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Shotgun : BaseSkill
+public class Shotgun : Skill
 {
-    [Range(1, 4)] public int Level = 1;
+    [Range(0, 4)] public int Level = 0;
 
     public GameObject Bullet;
 
@@ -40,58 +40,66 @@ public class Shotgun : BaseSkill
         new int[]{ 0, 3, -3, 7, -7, 15, -15, 30, -30 }
     };
 
+    private float _cooldown;
+
     private void Awake()
     {
         ObjectPool = new ObjectPool(Bullet, ObjectPoolParant);
     }
 
-    private IEnumerator Start()
+    private void Update()
     {
-        while (true)
+        if (Level == 0) return;
+        _cooldown += Time.deltaTime;
+        if (_cooldown > _cooldowns[Level - 1])
         {
-            var level = Level - 1;
-            var nearbies = Physics2D.OverlapCircleAll(transform.position, 12, 1 << 7);
-            if (nearbies.Length != 0)
+            _cooldown = 0;
+            Fire();
+        }
+    }
+
+    private void Fire()
+    {
+        var level = Level - 1;
+        var nearbies = Physics2D.OverlapCircleAll(transform.position, 12, 1 << 7);
+        if (nearbies.Length > 0)
+        {
+            Collider2D nearby = null;
+            var distance = 0f;
+            foreach (var e in nearbies)
             {
-                Collider2D nearby = null;
-                var distance = 0f;
-                foreach(var e in nearbies)
+                var currentDist = Vector2.Distance(transform.position, e.transform.position);
+                if (nearby == null)
                 {
-                    var currentDist = Vector2.Distance(transform.position, e.transform.position);
-                    if (nearby == null)
-                    {
-                        nearby = e;
-                        distance = currentDist;
-                        continue;
-                    }
-
-                    if (currentDist < distance)
-                    {
-                        nearby = e;
-                    }
+                    nearby = e;
+                    distance = currentDist;
+                    continue;
                 }
-                transform.right = (nearby.transform.position - transform.position).normalized;
+
+                if (currentDist < distance)
+                {
+                    nearby = e;
+                }
             }
-            else
-            {
-                transform.right = Direction;
-            }
+            transform.right = (nearby.transform.position - transform.position).normalized;
+        }
+        else
+        {
+            transform.right = Direction;
+        }
 
 
-            foreach (var e in _spreads[level])
-            {
-                var bullet = ObjectPool.Instantiate(transform.position);
-                bullet.transform.right = transform.right;
-                bullet.transform.rotation = Quaternion.Euler(0, 0, e) * bullet.transform.rotation;
-                var bulletScr = bullet.GetComponent<Bullet>();
-                bulletScr.Damage = _damage[level];
-                bulletScr.Speed = _speeds[level];
-                bulletScr.Distance = 24;
-                bulletScr.Passthrough = 10;
-                bulletScr.Parant = this;
-            }
-
-            yield return new WaitForSeconds(_cooldowns[level]);
+        foreach (var e in _spreads[level])
+        {
+            var bullet = ObjectPool.Instantiate(transform.position);
+            bullet.transform.right = transform.right;
+            bullet.transform.rotation = Quaternion.Euler(0, 0, e) * bullet.transform.rotation;
+            var bulletScr = bullet.GetComponent<Bullet>();
+            bulletScr.Damage = _damage[level];
+            bulletScr.Speed = _speeds[level];
+            bulletScr.Distance = 24;
+            bulletScr.Passthrough = 10;
+            bulletScr.Parant = this;
         }
     }
 }

@@ -2,10 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public enum BuffType
+{
+    BottleDamage = 0
+}
+
+[System.Serializable]
+public class Buff
+{
+    public BuffType Type;
+    public int Damage;
+    public float Interval;
+    public float CurrentInterval;
+    public float Duration;
+    public float CurrentDuration;
+    public bool MarkRemove;
+}
+
 public class EnemyController : MonoBehaviour
 {
+    public static List<EnemyController> VisibleEnemies = new List<EnemyController>();
+
     public int HP = 1000;
     public float Speed = .01f;
+
+    public List<Buff> Buff = new List<Buff>();
 
     private PlayerController _player;
     private Rigidbody2D _rb;
@@ -25,19 +46,42 @@ public class EnemyController : MonoBehaviour
         current -= .05f;
         current = Mathf.Max(current, 0);
         _sr.material.SetFloat("_HitEffectBlend", current);
+
+        for (int i = 0; i < Buff.Count; i++)
+        {
+            Buff[i].CurrentInterval += Time.deltaTime;
+            Buff[i].CurrentDuration += Time.deltaTime;
+            if (Buff[i].CurrentInterval >= Buff[i].Interval)
+            {
+                Buff[i].CurrentInterval = 0;
+                GetDamage(Mathf.Max(Buff[i].Damage, 0));
+            }
+            if (Buff[i].CurrentDuration >= Buff[i].Duration)
+            {
+                Buff[i].MarkRemove = true;
+            }
+        }
+        Buff.RemoveAll(x => x.MarkRemove);
     }
 
     private void FixedUpdate()
     {
         var direction = (_player.transform.position - transform.position).normalized;
         _rb.velocity = direction * Speed;
+        _sr.flipX = _rb.velocity.x < 0;
+    }
+
+    public void Knockback()
+    {
+        var direction = (transform.position - _player.transform.position).normalized;
+        _rb.MovePosition(transform.position + direction);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Bullet"))
         {
-            var damage = collision.gameObject.GetComponent<Bullet>().Damage;
+            var damage = collision.gameObject.GetComponent<Projectile>().Damage;
             GetDamage(damage);
         }
     }
@@ -51,5 +95,15 @@ public class EnemyController : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    private void OnBecameVisible()
+    {
+        VisibleEnemies.Add(this);
+    }
+
+    private void OnBecameInvisible()
+    {
+        VisibleEnemies.Remove(this);
     }
 }

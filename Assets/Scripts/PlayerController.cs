@@ -18,36 +18,38 @@ public class PlayerController : MonoBehaviour
     public Vector2 MoveTargetPos;
 
     public Transform SkillParant;
-    public List<BaseSkill> BaseSkills;
+    public List<Skill> BaseSkills;
 
-    private PlayerAction _pa;
-    private Rigidbody2D _rb;
+    private PlayerAction _playerAction;
+    private Rigidbody2D _rigidBody;
+    private SpriteRenderer _spriteRenderer;
 
     private void Awake()
     {
-        _pa = new PlayerAction();
-        _rb = GetComponent<Rigidbody2D>();
+        _playerAction = new PlayerAction();
+        _rigidBody = GetComponent<Rigidbody2D>();
+        _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
     private void Start()
     {
-        var skills = SkillParant.GetComponentsInChildren<BaseSkill>();
-        BaseSkills = new List<BaseSkill>(skills);
+        var skills = SkillParant.GetComponentsInChildren<Skill>();
+        BaseSkills = new List<Skill>(skills);
     }
 
     private void OnEnable()
     {
-        _pa.Enable();
+        _playerAction.Enable();
     }
 
     private void OnDisable()
     {
-        _pa.Disable();
+        _playerAction.Disable();
     }
 
     private void Update()
     {
-        var direction = _pa.Player_Map.Movememet.ReadValue<Vector2>();
+        var direction = _playerAction.Player_Map.Movememet.ReadValue<Vector2>();
         if (direction != Vector2.zero)
         {
             foreach (var e in BaseSkills)
@@ -59,22 +61,21 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Movement = _pa.Player_Map.Movememet.ReadValue<Vector2>();
+        Movement = _playerAction.Player_Map.Movememet.ReadValue<Vector2>();
 
-        _rb.velocity = Movement * MoveSpeed;
+        _rigidBody.velocity = Movement * MoveSpeed;
 
         if (Movement != Vector2.zero)
         {
-            var scale = transform.localScale;
             if (Movement.x < 0)
             {
-                scale.x = -1;
+                _spriteRenderer.flipX = true;
             }
-            else
+            else if (Movement.x > 0)
             {
-                scale.x = 1;
+                _spriteRenderer.flipX = false;
             }
-            transform.localScale = scale;
+            
             LastMovement = Movement;
             LastPosition = transform.position;
         }
