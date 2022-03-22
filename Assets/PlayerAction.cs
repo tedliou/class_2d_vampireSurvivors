@@ -35,6 +35,15 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Mouse"",
+                    ""type"": ""Value"",
+                    ""id"": ""3a356a00-4fdc-4211-b3ab-f24beffab8e1"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -92,6 +101,17 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                     ""action"": ""Movememet"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9f6fc3cd-7297-48df-8823-62147b22c32d"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Mouse"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -113,6 +133,7 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
         // Player_Map
         m_Player_Map = asset.FindActionMap("Player_Map", throwIfNotFound: true);
         m_Player_Map_Movememet = m_Player_Map.FindAction("Movememet", throwIfNotFound: true);
+        m_Player_Map_Mouse = m_Player_Map.FindAction("Mouse", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -173,11 +194,13 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
     private readonly InputActionMap m_Player_Map;
     private IPlayer_MapActions m_Player_MapActionsCallbackInterface;
     private readonly InputAction m_Player_Map_Movememet;
+    private readonly InputAction m_Player_Map_Mouse;
     public struct Player_MapActions
     {
         private @PlayerAction m_Wrapper;
         public Player_MapActions(@PlayerAction wrapper) { m_Wrapper = wrapper; }
         public InputAction @Movememet => m_Wrapper.m_Player_Map_Movememet;
+        public InputAction @Mouse => m_Wrapper.m_Player_Map_Mouse;
         public InputActionMap Get() { return m_Wrapper.m_Player_Map; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -190,6 +213,9 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                 @Movememet.started -= m_Wrapper.m_Player_MapActionsCallbackInterface.OnMovememet;
                 @Movememet.performed -= m_Wrapper.m_Player_MapActionsCallbackInterface.OnMovememet;
                 @Movememet.canceled -= m_Wrapper.m_Player_MapActionsCallbackInterface.OnMovememet;
+                @Mouse.started -= m_Wrapper.m_Player_MapActionsCallbackInterface.OnMouse;
+                @Mouse.performed -= m_Wrapper.m_Player_MapActionsCallbackInterface.OnMouse;
+                @Mouse.canceled -= m_Wrapper.m_Player_MapActionsCallbackInterface.OnMouse;
             }
             m_Wrapper.m_Player_MapActionsCallbackInterface = instance;
             if (instance != null)
@@ -197,6 +223,9 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
                 @Movememet.started += instance.OnMovememet;
                 @Movememet.performed += instance.OnMovememet;
                 @Movememet.canceled += instance.OnMovememet;
+                @Mouse.started += instance.OnMouse;
+                @Mouse.performed += instance.OnMouse;
+                @Mouse.canceled += instance.OnMouse;
             }
         }
     }
@@ -213,5 +242,6 @@ public partial class @PlayerAction : IInputActionCollection2, IDisposable
     public interface IPlayer_MapActions
     {
         void OnMovememet(InputAction.CallbackContext context);
+        void OnMouse(InputAction.CallbackContext context);
     }
 }

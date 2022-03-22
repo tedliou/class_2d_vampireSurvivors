@@ -1,18 +1,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI.Extensions;
 
 public class ConnectLine : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public Connecter Parant;
+    public UILineRenderer LineRenderer;
+
+    public void Create(Vector2 startPos, Connecter parant)
     {
-        
+        LineRenderer = GetComponent<UILineRenderer>();
+        LineRenderer.Points = new Vector2[2];
+        LineRenderer.Points[0] = startPos;
+        LineRenderer.Points[1] = startPos;
+        LineRenderer.SetAllDirty();
+        Parant = parant;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void UpdatePosition(Vector2 childPos)
     {
-        
+        LineRenderer.Points[1] = childPos;
+        LineRenderer.SetAllDirty();
     }
 }
