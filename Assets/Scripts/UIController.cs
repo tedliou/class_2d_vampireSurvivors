@@ -10,18 +10,25 @@ public class UIController : MonoBehaviour
     public TMP_Text level;
     public TMP_Text timer;
     public Slider expBar;
+    public TMP_Text message;
 
     [Header("String Format")]
     public string levelFormat = "Lv.{0}";
     public string timerFormat = "{0}:{1}";
+
+    private Coroutine _hideMessageTask;
 
     private void Start()
     {
         GameManager.OnTimerUpdate.AddListener(SetTimer);
         GameManager.OnLevelUpdate.AddListener(SetLevel);
         GameManager.OnExpUpdate.AddListener(SetExp);
+        GameManager.OnExpUpdate.AddListener((x, y) => {
+            SetMessage("HIC", .2f);
+        });
 
         expBar.minValue = 0;
+        message.enabled = false;
     }
 
     public void SetLevel(int level)
@@ -38,5 +45,19 @@ public class UIController : MonoBehaviour
     {
         expBar.maxValue = expMax;
         expBar.value = exp;
+    }
+
+    public void SetMessage(string text, float duration)
+    {
+        message.enabled = true;
+        message.text = text;
+        _hideMessageTask = StartCoroutine(HideMessage(duration));
+    }
+
+    private IEnumerator HideMessage(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        message.enabled = false;
+        _hideMessageTask = null;
     }
 }
