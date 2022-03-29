@@ -23,6 +23,8 @@ public class EnemyController : MonoBehaviour
 {
     public static List<EnemyController> VisibleEnemies = new List<EnemyController>();
 
+    public ExpController exp;
+
     public int HP = 1000;
     public float Speed = .01f;
 
@@ -93,6 +95,8 @@ public class EnemyController : MonoBehaviour
 
         if (HP <= 0)
         {
+            exp.transform.position = transform.position;
+            Instantiate(exp);
             Destroy(gameObject);
         }
     }

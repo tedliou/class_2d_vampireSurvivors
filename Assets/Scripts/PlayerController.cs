@@ -10,7 +10,6 @@ public class PlayerController : MonoBehaviour
     public float RushSpeed;
     public float RushDistance;
 
-    [Header("Stats")]
     public bool Rush;
     public float CurrentRushDistance;
     public Vector2 LastMovement;

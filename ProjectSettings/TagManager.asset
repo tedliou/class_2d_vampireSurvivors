@@ -7,6 +7,8 @@ TagManager:
   - Block
   - Enemy
   - Bullet
+  - Collector
+  - EXP
   layers:
   - Default
   - TransparentFX
