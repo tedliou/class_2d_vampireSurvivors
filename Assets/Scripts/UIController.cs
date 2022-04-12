@@ -13,6 +13,7 @@ public class UIController : MonoBehaviour
     public TMP_Text message;
     public Slider hpBar;
     public GameObject deathScreen;
+    public GameObject menu;
 
     [Header("String Format")]
     public string levelFormat = "Lv.{0}";
