@@ -26,11 +26,11 @@ public class Guardian : Skill
             }
         }
 
-        while (_stones.Count > Level)
-        {
-            Destroy(_stones[_stones.Count - 1]);
-            _stones.RemoveAt(_stones.Count - 1);
-        }
+        //while (_stones.Count > Level)
+        //{
+        //    Destroy(_stones[_stones.Count - 1]);
+        //    _stones.RemoveAt(_stones.Count - 1);
+        //}
 
         for (int i = 0; i < _stones.Count; i++)
         {

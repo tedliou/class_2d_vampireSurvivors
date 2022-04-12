@@ -365,10 +365,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Direction: {x: 1, y: 0}
   ObjectPoolParant: {fileID: 0}
-  Level: 4
-  Speed: 0.8
-  Radius: 3
-  Resulotion: 90
+  Level: 26
+  Speed: 1
+  Radius: 4
+  Resulotion: 180
   Dot: {fileID: 588668079753466173, guid: 265a62779ae543a4087f24f3a155f905, type: 3}
   Stone: {fileID: 7899670800448133425, guid: 0545c78065c544e418303b56edd2d0bf, type: 3}
 --- !u!1 &178264289
