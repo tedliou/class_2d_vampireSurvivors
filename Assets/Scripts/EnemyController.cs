@@ -41,6 +41,8 @@ public class EnemyController : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _sr = GetComponent<SpriteRenderer>();
         _sr.material = Instantiate(_sr.material);
+
+        HP += GameManager.Instance.time;
     }
 
     private void Update()
@@ -65,6 +67,8 @@ public class EnemyController : MonoBehaviour
             }
         }
         Buff.RemoveAll(x => x.MarkRemove);
+
+        
     }
 
     private void FixedUpdate()

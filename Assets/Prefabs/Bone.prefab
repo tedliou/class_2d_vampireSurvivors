@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2728367952893838322}
   - component: {fileID: 2728367952893838323}
   m_Layer: 6
-  m_Name: Bullet
+  m_Name: Bone
   m_TagString: Bullet
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -75,7 +75,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 999
-  m_Sprite: {fileID: 21300000, guid: 50ca46e82f23c4248988afdf9164f513, type: 3}
+  m_Sprite: {fileID: 21300000, guid: f6c252c9691c6e44f9fb9688176ae593, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -168,7 +168,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2910254320907094879
 Transform:
   m_ObjectHideFlags: 0
@@ -224,7 +224,7 @@ TrailRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Time: 0.1
+  m_Time: 1
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 0.05
