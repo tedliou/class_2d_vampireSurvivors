@@ -11,6 +11,8 @@ public class UIController : MonoBehaviour
     public TMP_Text timer;
     public Slider expBar;
     public TMP_Text message;
+    public Slider hpBar;
+    public GameObject deathScreen;
 
     [Header("String Format")]
     public string levelFormat = "Lv.{0}";
@@ -26,6 +28,8 @@ public class UIController : MonoBehaviour
         GameManager.OnExpUpdate.AddListener((x, y) => {
             SetMessage("HIC", .2f);
         });
+        GameManager.OnHPUpdate.AddListener(SetHP);
+        GameManager.OnDeath.AddListener(() => deathScreen.SetActive(true));
 
         expBar.minValue = 0;
         message.enabled = false;
@@ -59,5 +63,10 @@ public class UIController : MonoBehaviour
         yield return new WaitForSeconds(duration);
         message.enabled = false;
         _hideMessageTask = null;
+    }
+
+    public void SetHP(int hp)
+    {
+        hpBar.value = hp;
     }
 }

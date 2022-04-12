@@ -79,4 +79,12 @@ public class PlayerController : MonoBehaviour
             LastPosition = transform.position;
         }
     }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Enemy"))
+        {
+            GameManager.Instance.ReduceHP(collision.GetComponent<EnemyController>().damage);
+        }
+    }
 }

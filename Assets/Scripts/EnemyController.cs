@@ -27,6 +27,7 @@ public class EnemyController : MonoBehaviour
 
     public int HP = 1000;
     public float Speed = .01f;
+    public int damage = 10;
 
     public List<Buff> Buff = new List<Buff>();
 

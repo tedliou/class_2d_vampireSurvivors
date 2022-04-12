@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Events;
 using System;
 
@@ -11,8 +12,10 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Event
+    public static UnityEvent OnDeath { get; set; } = new UnityEvent();
     public static UnityEvent<int, int> OnTimerUpdate { get; set; } = new UnityEvent<int, int>();
     public static UnityEvent<int> OnLevelUpdate { get; set; } = new UnityEvent<int>();
+    public static UnityEvent<int> OnHPUpdate { get; set; } = new UnityEvent<int>();
     public static UnityEvent<int, int> OnExpUpdate { get; set; } = new UnityEvent<int, int>();
     #endregion
 
@@ -23,9 +26,10 @@ public class GameManager : MonoBehaviour
     public int upgradeExpRequire;
     public int baseExpRequire = 5;
     public int increaseExpRequire = 2;
+    public int hp;
 
     [Header("Time")]
-    public int Time;
+    public int time;
     #endregion
 
     #region Private
@@ -47,10 +51,21 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        Time.timeScale = 1;
         StartTimer();
         ResetPlayer();
     }
 
+    public void StopGame()
+    {
+        Time.timeScale = 0;
+    }
+
+    public void RetryGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        StartGame();
+    }
 
     #region Timer
     public void StartTimer()
@@ -61,7 +76,7 @@ public class GameManager : MonoBehaviour
 
     private void ResetTimer()
     {
-        Time = 0;
+        time = 0;
         OnTimerUpdate.Invoke(0, 0);
         if (_timerTask != null) StopCoroutine(_timerTask);
     }
@@ -71,8 +86,8 @@ public class GameManager : MonoBehaviour
         while (true)
         {
             yield return new WaitForSecondsRealtime(1);
-            Time++;
-            OnTimerUpdate.Invoke(Time / 60, Time % 60);
+            time++;
+            OnTimerUpdate.Invoke(time / 60, time % 60);
         }
     }
     #endregion
@@ -82,11 +97,12 @@ public class GameManager : MonoBehaviour
     {
         level = 0;
         exp = 0;
+        RefillHP();
         UpdateUpgradeExpRequirement();
         OnLevelUpdate.Invoke(level);
         OnExpUpdate.Invoke(exp, upgradeExpRequire);
     }
-    
+
     public void AddExp(int exp)
     {
         this.exp += exp;
@@ -108,5 +124,24 @@ public class GameManager : MonoBehaviour
             upgradeExpRequire += baseExpRequire + increaseExpRequire * i;
         }
     }
+
+    public void RefillHP()
+    {
+        hp = 100;
+        OnHPUpdate.Invoke(hp);
+    }
+
+    public void ReduceHP(int point)
+    {
+        hp -= point;
+        hp = Mathf.Max(0, hp);
+        OnHPUpdate.Invoke(hp);
+        if (hp == 0)
+        {
+            OnDeath.Invoke();
+            StopGame();
+        }
+    }
+
     #endregion
 }
