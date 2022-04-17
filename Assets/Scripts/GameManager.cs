@@ -30,6 +30,10 @@ public class GameManager : MonoBehaviour
 
     [Header("Time")]
     public int time;
+
+    [Header("UI")]
+    public GameObject levelUp;
+    public GameObject menu;
     #endregion
 
     #region Private
@@ -47,6 +51,11 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         Invoke(nameof(StartGame), 1);
     }
+
+    private void Update()
+    {
+        
+    }
     #endregion
 
     public void StartGame()
@@ -54,6 +63,11 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1;
         StartTimer();
         ResetPlayer();
+        levelUp.SetActive(false);
+        Levelup.guardianLevel = 1;
+        Levelup.bowLevel = 0;
+        Levelup.poisonLevel = 0;
+        Levelup.swordLevel = 0;
     }
 
     public void StopGame()
@@ -85,6 +99,10 @@ public class GameManager : MonoBehaviour
     {
         while (true)
         {
+            while(Time.timeScale == 0)
+            {
+                yield return null;
+            }
             yield return new WaitForSecondsRealtime(1);
             time++;
             OnTimerUpdate.Invoke(time / 60, time % 60);
@@ -112,6 +130,8 @@ public class GameManager : MonoBehaviour
             level += 1;
             UpdateUpgradeExpRequirement();
             OnLevelUpdate.Invoke(level);
+            levelUp.SetActive(true);
+            RefillHP();
         }
         OnExpUpdate.Invoke(this.exp, upgradeExpRequire);
     }

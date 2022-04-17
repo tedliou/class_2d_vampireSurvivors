@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public static PlayerController instance;
+
     [Header("Config")]
     public float MoveSpeed;
     public Vector2 Movement;
@@ -22,12 +24,15 @@ public class PlayerController : MonoBehaviour
     private PlayerAction _playerAction;
     private Rigidbody2D _rigidBody;
     private SpriteRenderer _spriteRenderer;
+    private Animator _animator;
 
     private void Awake()
     {
+        instance = this;
         _playerAction = new PlayerAction();
         _rigidBody = GetComponent<Rigidbody2D>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
+        _animator = GetComponent<Animator>();
     }
 
     private void Start()
@@ -54,7 +59,12 @@ public class PlayerController : MonoBehaviour
             foreach (var e in BaseSkills)
             {
                 e.Direction = direction;
-           }
+            }
+            //_animator.enabled = true;
+        }
+        else
+        {
+            //_animator.enabled = false;
         }
     }
 
@@ -86,5 +96,10 @@ public class PlayerController : MonoBehaviour
         {
             GameManager.Instance.ReduceHP(collision.GetComponent<EnemyController>().damage);
         }
+    }
+
+    public void Attack()
+    {
+        _animator.Play("Attack");
     }
 }

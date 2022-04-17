@@ -16,13 +16,15 @@ public class ThrowableSwordSkill : Skill
 
     private void Update()
     {
+        if (Levelup.swordLevel == 0) return;
         _currentTime += Time.deltaTime;
-        if (_currentTime > cooldown)
+        if (_currentTime > Mathf.Max(cooldown, cooldown - Levelup.swordLevel * .1f))
         {
+            PlayerController.instance.Attack();
             _currentTime = 0;
             swordPrefab.transform.position = transform.position;
 
-            for (int i = 0; i < 360; i+=10)
+            for (int i = 0; i < 360; i+=360 / Levelup.swordLevel)
             {
                 var x = 10 * Mathf.Cos(i * Mathf.PI / 180);
                 var y = 10 * Mathf.Sin(i * Mathf.PI / 180);

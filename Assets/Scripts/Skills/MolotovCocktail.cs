@@ -19,10 +19,12 @@ public class MolotovCocktail : Skill
 
     private void Update()
     {
+        Cooldown = 5f / Levelup.poisonLevel;
         _step = 360 / Step;
         _cooldown += Time.deltaTime;
         if (_cooldown > Cooldown)
         {
+            PlayerController.instance.Attack();
             _cooldown = 0;
             _index++;
             if (_index > Step)

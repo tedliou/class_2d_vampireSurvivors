@@ -13,6 +13,11 @@ public class Guardian : Skill
 
     private List<GameObject> _stones = new List<GameObject>();
 
+    private void Update()
+    {
+        Level = Levelup.guardianLevel;
+    }
+
     private void FixedUpdate()
     {
         Level = Mathf.Max(0, Level);
@@ -20,7 +25,7 @@ public class Guardian : Skill
         {
             if (_stones.Count == 0 || (Vector3.Distance(new Vector3(0, Radius), _stones[_stones.Count - 1].transform.position) > 1f))
             {
-                Stone.Damage = 10;
+                Stone.Damage = 100;
                 Stone.transform.position = new Vector3(0, Radius);
                 _stones.Add(Instantiate(Stone, transform).gameObject);
             }

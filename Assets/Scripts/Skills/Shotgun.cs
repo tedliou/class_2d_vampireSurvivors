@@ -28,8 +28,8 @@ public class Shotgun : Skill
     {
         1.2f,
         0.8f,
-        0.3f,
-        0.1f
+        0.7f,
+        0.6f
     };
 
     private int[][] _spreads = new int[][]
@@ -49,9 +49,10 @@ public class Shotgun : Skill
 
     private void Update()
     {
+        Level = Levelup.bowLevel;
         if (Level == 0) return;
         _cooldown += Time.deltaTime;
-        if (_cooldown > _cooldowns[Level - 1])
+        if (_cooldown > _cooldowns[Mathf.Clamp(Level - 1, 0, _cooldowns.Length - 1)])
         {
             _cooldown = 0;
             Fire();
@@ -60,6 +61,7 @@ public class Shotgun : Skill
 
     private void Fire()
     {
+        PlayerController.instance.Attack();
         var level = Level - 1;
         var nearbies = Physics2D.OverlapCircleAll(transform.position, 12, 1 << 7);
         if (nearbies.Length > 0)
@@ -89,14 +91,14 @@ public class Shotgun : Skill
         }
 
 
-        foreach (var e in _spreads[level])
+        foreach (var e in _spreads[Mathf.Clamp(level, 0, _spreads.Length - 1)])
         {
             var bullet = ObjectPool.Instantiate(transform.position);
             bullet.transform.right = transform.right;
             bullet.transform.rotation = Quaternion.Euler(0, 0, e) * bullet.transform.rotation;
             var bulletScr = bullet.GetComponent<Bullet>();
-            bulletScr.Damage = _damage[level];
-            bulletScr.Speed = _speeds[level];
+            bulletScr.Damage = 100 + Level * 10;
+            bulletScr.Speed = .4f + Level * .1f;
             bulletScr.Distance = 24;
             bulletScr.Passthrough = 10;
             bulletScr.Parant = this;
