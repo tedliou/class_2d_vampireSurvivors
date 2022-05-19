@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d50f4d7392224d44afaba17151b2dba, type: 3}
+  m_Name: Boots
+  m_EditorClassIdentifier: 
+  itemId: 1
+  itemName: "\u7C97\u5E03\u978B"
+  itemDescription: "\u5229\u7528\u5404\u7A2E\u66EC\u4E7E\u7684\u690D\u7269\u7E96\u7DAD\u7DE8\u7E54\u800C\u6210\u7684\u978B\u5B50\uFF0C\u50F9\u683C\u4F4E\u5EC9\u4E14\u53D7\u5230\u591A\u6578\u539F\u59CB\u4EBA\u7684\u559C\u611B\u3002"
+  itemObject: {fileID: 5161416975669312772, guid: 75c1369ea405e814baf44df4780dbb9c, type: 3}

@@ -23,13 +23,17 @@ public class Spawner : MonoBehaviour
         if (_interval > Interval)
         {
             _interval = 0;
-
-            var center = transform.position;
-            var angle = Random.Range(0, 360);
-            var x = center.x + Radius * Mathf.Cos(angle * Mathf.PI / 180);
-            var y = center.y + Radius * Mathf.Sin(angle * Mathf.PI / 180);
-            Enemy.transform.position = new Vector3(x, y, center.z);
-            Instantiate(Enemy);
+            Spawn();
         }
+    }
+
+    private void Spawn()
+    {
+        var center = transform.position;
+        var angle = Random.Range(0, 360);
+        var x = center.x + Radius * Mathf.Cos(angle * Mathf.PI / 180);
+        var y = center.y + Radius * Mathf.Sin(angle * Mathf.PI / 180);
+        Enemy.transform.position = new Vector3(x, y, center.z);
+        Instantiate(Enemy);
     }
 }

@@ -59,7 +59,6 @@ public class Shotgun360 : Skill
 
         if (_timeDelta >= 2f / Level)
         {
-            PlayerController.instance.Attack();
             _timeDelta = 0;
 
             transform.Rotate(Quaternion.Euler(0, 0, 15).eulerAngles);

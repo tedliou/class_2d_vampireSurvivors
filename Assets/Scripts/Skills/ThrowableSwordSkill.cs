@@ -20,7 +20,6 @@ public class ThrowableSwordSkill : Skill
         _currentTime += Time.deltaTime;
         if (_currentTime > Mathf.Max(cooldown, cooldown - Levelup.swordLevel * .1f))
         {
-            PlayerController.instance.Attack();
             _currentTime = 0;
             swordPrefab.transform.position = transform.position;
 

@@ -24,7 +24,6 @@ public class MolotovCocktail : Skill
         _cooldown += Time.deltaTime;
         if (_cooldown > Cooldown)
         {
-            PlayerController.instance.Attack();
             _cooldown = 0;
             _index++;
             if (_index > Step)

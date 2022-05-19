@@ -31,13 +31,13 @@ public class EnemyController : MonoBehaviour
 
     public List<Buff> Buff = new List<Buff>();
 
-    private PlayerController _player;
+    private GamePlayer _player;
     private Rigidbody2D _rb;
     private SpriteRenderer _sr;
 
     private void Start()
     {
-        _player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+        _player = GameObject.FindGameObjectWithTag("Player").GetComponent<GamePlayer>();
         _rb = GetComponent<Rigidbody2D>();
         _sr = GetComponent<SpriteRenderer>();
         _sr.material = Instantiate(_sr.material);

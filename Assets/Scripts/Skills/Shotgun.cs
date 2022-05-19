@@ -61,7 +61,6 @@ public class Shotgun : Skill
 
     private void Fire()
     {
-        PlayerController.instance.Attack();
         var level = Level - 1;
         var nearbies = Physics2D.OverlapCircleAll(transform.position, 12, 1 << 7);
         if (nearbies.Length > 0)

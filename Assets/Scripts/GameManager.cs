@@ -40,7 +40,8 @@ public class GameManager : MonoBehaviour
     private Coroutine _timerTask;
     #endregion
 
-    #region Message
+    #region Unity Message
+
     private void Awake()
     {
         Instance = this;
@@ -49,7 +50,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         DontDestroyOnLoad(gameObject);
-        Invoke(nameof(StartGame), 1);
+        //Invoke(nameof(StartGame), 1);
     }
 
     private void Update()
@@ -57,6 +58,16 @@ public class GameManager : MonoBehaviour
         
     }
     #endregion
+
+    public void PauseGame()
+    {
+        Time.timeScale = 0;
+    }
+
+    public void ContinueGame()
+    {
+        Time.timeScale = 1;
+    }
 
     public void StartGame()
     {
