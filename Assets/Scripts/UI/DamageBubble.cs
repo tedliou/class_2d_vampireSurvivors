@@ -28,7 +28,7 @@ namespace Hunter2D
         private void Start()
         {
             _targetPos = rectTransform.anchoredPosition + Vector2.up * popupY;
-            rectTransform.DOAnchorPosY(rectTransform.anchoredPosition.y + popupY, 1)
+            rectTransform.DOAnchorPosY(rectTransform.anchoredPosition.y + popupY, .4f)
                          .OnComplete(() => Destroy(gameObject));
         }
     }

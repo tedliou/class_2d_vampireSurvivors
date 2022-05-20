@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Events;
 using System;
+using DG.Tweening;
 
 public class GameManager : MonoBehaviour
 {
@@ -50,7 +51,7 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         DontDestroyOnLoad(gameObject);
-        //Invoke(nameof(StartGame), 1);
+        StartGame();
     }
 
     private void Update()
@@ -73,12 +74,6 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1;
         StartTimer();
-        ResetPlayer();
-        levelUp.SetActive(false);
-        Levelup.guardianLevel = 1;
-        Levelup.bowLevel = 0;
-        Levelup.poisonLevel = 0;
-        Levelup.swordLevel = 0;
     }
 
     public void StopGame()
@@ -119,60 +114,5 @@ public class GameManager : MonoBehaviour
             OnTimerUpdate.Invoke(time / 60, time % 60);
         }
     }
-    #endregion
-
-    #region Player
-    private void ResetPlayer()
-    {
-        level = 0;
-        exp = 0;
-        RefillHP();
-        UpdateUpgradeExpRequirement();
-        OnLevelUpdate.Invoke(level);
-        OnExpUpdate.Invoke(exp, upgradeExpRequire);
-    }
-
-    public void AddExp(int exp)
-    {
-        this.exp += exp;
-        if (this.exp >= upgradeExpRequire)
-        {
-            this.exp = 0;
-            level += 1;
-            UpdateUpgradeExpRequirement();
-            OnLevelUpdate.Invoke(level);
-            levelUp.SetActive(true);
-            RefillHP();
-        }
-        OnExpUpdate.Invoke(this.exp, upgradeExpRequire);
-    }
-
-    private void UpdateUpgradeExpRequirement()
-    {
-        upgradeExpRequire = 0;
-        for (int i = 0; i < level + 1; i++)
-        {
-            upgradeExpRequire += baseExpRequire + increaseExpRequire * i;
-        }
-    }
-
-    public void RefillHP()
-    {
-        hp = 100;
-        OnHPUpdate.Invoke(hp);
-    }
-
-    public void ReduceHP(int point)
-    {
-        hp -= point;
-        hp = Mathf.Max(0, hp);
-        OnHPUpdate.Invoke(hp);
-        if (hp == 0)
-        {
-            OnDeath.Invoke();
-            StopGame();
-        }
-    }
-
     #endregion
 }

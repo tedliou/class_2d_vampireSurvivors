@@ -12,12 +12,14 @@ namespace Hunter2D
 }
 public enum GameRole
 {
-    Hunter = 0
+    Hunter = 0,
+    RebelHunter = 1
 }
 
 public class GamePlayer : MonoBehaviour
 {
     public static GamePlayer instance;
+    public static Canvas mainCanvas;
 
     [Header("Status")]
     public GameRole role;
@@ -29,6 +31,7 @@ public class GamePlayer : MonoBehaviour
 
     [Header("Settings")]
     public float moveSpeed;
+    public float stopDistance;
 
     [Header("Components")]
     public new Rigidbody2D rigidbody;
@@ -37,6 +40,7 @@ public class GamePlayer : MonoBehaviour
     public Canvas canvas;
     public DamageBubble damageBubble;
     public Transform damageBubbleTransform;
+    public ExpController expPrefab;
 
     private readonly string _animationMode = "Mode";
 
@@ -56,64 +60,77 @@ public class GamePlayer : MonoBehaviour
     }
 #endif
 
-    private void Awake()
-    {
-        instance = this;
-    }
-
     private void Start()
     {
-    }
+        if (mainCanvas == null)
+        {
+            mainCanvas = canvas;
+        }
 
-    private void OnDestroy()
-    {
-        
-    }
+        if (role == GameRole.Hunter)
+        {
+            instance = this;
+        }
 
-    private void Update()
-    {
-        
+        level = 1;
+        exp = 0;
+        health = 100;
+        items = new List<ItemData>();
     }
 
     private void FixedUpdate()
     {
+        if (role != GameRole.Hunter)
+        {
+            if (Vector2.Distance(instance.transform.position,transform.position) < stopDistance)
+            {
+                SetMove(Vector2.zero);
+            }
+            else
+            {
+                SetMove((instance.transform.position - transform.position).normalized);
+            }
+        }
         Move();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Enemy"))
+        if (role == GameRole.Hunter)
         {
-            GameManager.Instance.ReduceHP(collision.GetComponent<EnemyController>().damage);
+            if (collision.CompareTag("Enemy"))
+            {
+                GetDamage(5);
+            }
+        }
+        else
+        {
+            if (collision.CompareTag("Bullet"))
+            {
+                GetDamage(20);
+            }
         }
     }
     #endregion
 
     public void SetMove(InputAction.CallbackContext context)
     {
-        direction = context.ReadValue<Vector2>();
-        Debug.Log($"Input direction: {direction}");
+        SetMove(context.ReadValue<Vector2>());
+    }
+
+    public void SetMove(Vector2 direction)
+    {
+        this.direction = direction;
         ChangeAnimationState();
     }
 
     public void ChangeAnimationState()
     {
         var nextState = animator.GetFloat(_animationMode);
-        if (direction.x < 0)
-        {
-            spriteRenderer.flipX = true;
-            nextState = 1;
-        }
-        else
-        {
-            if (direction.x > 0)
-            {
-                nextState = 1;
-                spriteRenderer.flipX = false;
-            }
-            else if (direction.y < 0) nextState = 0;
-            else if (direction.y > 0) nextState = 2;
-        }
+        if (direction.x < 0) nextState = 3;
+        else if(direction.x > 0) nextState = 2;
+        else if (direction.y < 0) nextState = 0;
+        else if (direction.y > 0) nextState = 1;
         animator.SetFloat(_animationMode, nextState);
     }
 
@@ -125,10 +142,37 @@ public class GamePlayer : MonoBehaviour
     [Button]
     public void GetDamage(int damage = 0)
     {
-        var bubble = Instantiate(damageBubble, canvas.transform);
+        var bubble = Instantiate(damageBubble, mainCanvas.transform);
         var pos = Camera.main.WorldToScreenPoint(damageBubbleTransform.position);
         pos.z = 0;
         bubble.rectTransform.anchoredPosition = pos;
         bubble.bubbleText.text = damage.ToString();
+        health -= damage;
+        if (health <= 0)
+        {
+            if (role == GameRole.Hunter)
+            {
+                // Game over
+            }
+            else
+            {
+                // Kill
+                expPrefab.transform.position = transform.position;
+                Instantiate(expPrefab);
+                Destroy(gameObject);
+            }
+        }
+    }
+
+    public void GetExp(int exp)
+    {
+        this.exp += exp;
+        if (this.exp >= 100)
+        {
+            this.exp = 0;
+            level += 1;
+            UIController.instance.CreateUpgradeOption();
+            GameManager.Instance.PauseGame();
+        }
     }
 }

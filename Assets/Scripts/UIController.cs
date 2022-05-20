@@ -6,6 +6,8 @@ using TMPro;
 
 public class UIController : MonoBehaviour
 {
+    public static UIController instance;
+
     [Header("Component")]
     public TMP_Text level;
     public TMP_Text timer;
@@ -14,6 +16,7 @@ public class UIController : MonoBehaviour
     public Slider hpBar;
     public GameObject deathScreen;
     public GameObject menu;
+    public Hunter2D.UpgradeOptions upgradeOptions;
 
     [Header("String Format")]
     public string levelFormat = "Lv.{0}";
@@ -21,19 +24,30 @@ public class UIController : MonoBehaviour
 
     private Coroutine _hideMessageTask;
 
-    private void Start()
+    private void Awake()
+    {
+        instance = this;
+    }
+
+    private async void Start()
     {
         GameManager.OnTimerUpdate.AddListener(SetTimer);
-        GameManager.OnLevelUpdate.AddListener(SetLevel);
-        GameManager.OnExpUpdate.AddListener(SetExp);
-        GameManager.OnExpUpdate.AddListener((x, y) => {
-            SetMessage("HIC", .2f);
-        });
-        GameManager.OnHPUpdate.AddListener(SetHP);
-        GameManager.OnDeath.AddListener(() => deathScreen.SetActive(true));
+        //GameManager.OnLevelUpdate.AddListener(SetLevel);
+        //GameManager.OnExpUpdate.AddListener(SetExp);
+        //GameManager.OnHPUpdate.AddListener(SetHP);
+        //GameManager.OnDeath.AddListener(() => deathScreen.SetActive(true));
 
-        expBar.minValue = 0;
-        message.enabled = false;
+        while (!GamePlayer.instance) await System.Threading.Tasks.Task.Yield();
+        SetExp(GamePlayer.instance.exp, 100);
+        SetLevel(1);
+        SetHP(100);
+    }
+
+    private void Update()
+    {
+        SetExp(GamePlayer.instance.exp, 100);
+        SetLevel(GamePlayer.instance.level);
+        SetHP(GamePlayer.instance.health);
     }
 
     public void SetLevel(int level)
@@ -52,22 +66,13 @@ public class UIController : MonoBehaviour
         expBar.value = exp;
     }
 
-    public void SetMessage(string text, float duration)
-    {
-        message.enabled = true;
-        message.text = text;
-        _hideMessageTask = StartCoroutine(HideMessage(duration));
-    }
-
-    private IEnumerator HideMessage(float duration)
-    {
-        yield return new WaitForSeconds(duration);
-        message.enabled = false;
-        _hideMessageTask = null;
-    }
-
     public void SetHP(int hp)
     {
         hpBar.value = hp;
+    }
+
+    public void CreateUpgradeOption()
+    {
+        Instantiate(upgradeOptions, transform).transform.SetAsLastSibling();
     }
 }
