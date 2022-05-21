@@ -58,7 +58,7 @@ public class Bullet : Projectile
     {
         if (collision.CompareTag("Block"))
         {
-            Debug.Log("BLOCK");
+            // Debug.Log("BLOCK");
         }
         if (collision.CompareTag("Block") || collision.CompareTag("Enemy"))
         {

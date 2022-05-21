@@ -44,7 +44,7 @@ namespace Hunter2D
 
         private void Start()
         {
-            SetActive(false);
+            SetActive(isActive);
             button.onClick.AddListener(() => onClick.Invoke());
         }
         #endregion

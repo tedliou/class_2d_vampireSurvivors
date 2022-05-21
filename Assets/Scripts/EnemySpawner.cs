@@ -31,6 +31,7 @@ namespace Hunter2D
 
         private void Update()
         {
+            enemies.RemoveAll(x => x == null);
             if (enemies.Count > spawnLimit)
             {
                 _interval = spawnInterval;

@@ -5,10 +5,32 @@ using UnityEngine.InputSystem;
 using Sirenix.OdinInspector;
 using TMPro;
 using Hunter2D;
+using System.Linq;
 
 namespace Hunter2D
 {
+    [System.Serializable]
+    public class GameBuff
+    {
+        public float moveSpeed;
+        public int attackDamage;
+        public float attackSpeed;
 
+        public GameBuff()
+        {
+            moveSpeed = 0;
+            attackDamage = 0;
+            attackSpeed = 0;
+        }
+
+        public static GameBuff operator +(GameBuff aBuff, GameBuff bBuff)
+        {
+            aBuff.moveSpeed += bBuff.moveSpeed;
+            aBuff.attackDamage += bBuff.attackDamage;
+            aBuff.attackSpeed += bBuff.attackSpeed;
+            return aBuff;
+        }
+    }
 }
 public enum GameRole
 {
@@ -28,6 +50,7 @@ public class GamePlayer : MonoBehaviour
     public int health;
     public Vector2 direction;
     public List<ItemData> items;
+    public GameBuff buff;
 
     [Header("Settings")]
     public float moveSpeed;
@@ -41,8 +64,10 @@ public class GamePlayer : MonoBehaviour
     public DamageBubble damageBubble;
     public Transform damageBubbleTransform;
     public ExpController expPrefab;
+    public Animator[] baseGuns;
 
     private readonly string _animationMode = "Mode";
+    
 
     #region Unity Message
 
@@ -57,6 +82,7 @@ public class GamePlayer : MonoBehaviour
         rigidbody = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        mainCanvas = null;
     }
 #endif
 
@@ -76,6 +102,9 @@ public class GamePlayer : MonoBehaviour
         exp = 0;
         health = 100;
         items = new List<ItemData>();
+        buff = new GameBuff();
+
+        StartCoroutine(AttackLoop());
     }
 
     private void FixedUpdate()
@@ -100,18 +129,55 @@ public class GamePlayer : MonoBehaviour
         {
             if (collision.CompareTag("Enemy"))
             {
-                GetDamage(5);
+                //GetDamage(10);
             }
         }
         else
         {
             if (collision.CompareTag("Bullet"))
             {
-                GetDamage(20);
+                GetDamage(20 + instance.buff.attackDamage);
             }
         }
     }
     #endregion
+
+    private IEnumerator AttackLoop()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(Mathf.Max(1 - buff.attackSpeed, 0));
+            if (role == GameRole.Hunter)
+            {
+                foreach (var a in baseGuns)
+                {
+                    a.SetTrigger("Fire");
+                }
+            }
+            else
+            {
+                if (Vector2.Distance(transform.position, instance.transform.position) < .1f)
+                {
+                    instance.GetDamage(10);
+                }
+            }
+        }
+    }
+
+    public void AddItem(ItemData item)
+    {
+        items.Add(item);
+        UpdateBuffTable();
+    }
+
+    private void UpdateBuffTable()
+    {
+        buff = new GameBuff();
+        foreach(var item in items)
+        {
+            buff += item.buff;
+        }
+    }
 
     public void SetMove(InputAction.CallbackContext context)
     {
@@ -136,7 +202,7 @@ public class GamePlayer : MonoBehaviour
 
     private void Move()
     {
-        rigidbody.velocity = direction * moveSpeed;
+        rigidbody.velocity = direction * (moveSpeed + buff.moveSpeed);
     }
 
     [Button]
@@ -145,7 +211,7 @@ public class GamePlayer : MonoBehaviour
         var bubble = Instantiate(damageBubble, mainCanvas.transform);
         var pos = Camera.main.WorldToScreenPoint(damageBubbleTransform.position);
         pos.z = 0;
-        bubble.rectTransform.anchoredPosition = pos;
+        bubble.transform.position = pos;
         bubble.bubbleText.text = damage.ToString();
         health -= damage;
         if (health <= 0)
@@ -153,6 +219,7 @@ public class GamePlayer : MonoBehaviour
             if (role == GameRole.Hunter)
             {
                 // Game over
+                GameManager.Instance.StopGame();
             }
             else
             {
@@ -166,13 +233,20 @@ public class GamePlayer : MonoBehaviour
 
     public void GetExp(int exp)
     {
+        health = Mathf.Min(health + 20, 100);
         this.exp += exp;
         if (this.exp >= 100)
         {
+            health = 100;
             this.exp = 0;
             level += 1;
             UIController.instance.CreateUpgradeOption();
             GameManager.Instance.PauseGame();
         }
+    }
+
+    public int GetItemCount(ItemData itemData)
+    {
+        return items.FindAll(x => x == itemData).Count;
     }
 }

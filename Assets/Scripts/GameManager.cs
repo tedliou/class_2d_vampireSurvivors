@@ -21,20 +21,11 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Public
-    [Header("Player")]
-    public int level;
-    public int exp;
-    public int upgradeExpRequire;
-    public int baseExpRequire = 5;
-    public int increaseExpRequire = 2;
-    public int hp;
-
-    [Header("Time")]
+    [Header("Status")]
     public int time;
 
-    [Header("UI")]
-    public GameObject levelUp;
-    public GameObject menu;
+    [Header("Components")]
+    public GameObject death;
     #endregion
 
     #region Private
@@ -79,6 +70,7 @@ public class GameManager : MonoBehaviour
     public void StopGame()
     {
         Time.timeScale = 0;
+        death.SetActive(true);
     }
 
     public void RetryGame()

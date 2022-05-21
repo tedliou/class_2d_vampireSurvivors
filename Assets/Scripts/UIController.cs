@@ -17,6 +17,7 @@ public class UIController : MonoBehaviour
     public GameObject deathScreen;
     public GameObject menu;
     public Hunter2D.UpgradeOptions upgradeOptions;
+    public Transform overlayCanvas;
 
     [Header("String Format")]
     public string levelFormat = "Lv.{0}";
@@ -73,6 +74,6 @@ public class UIController : MonoBehaviour
 
     public void CreateUpgradeOption()
     {
-        Instantiate(upgradeOptions, transform).transform.SetAsLastSibling();
+        Instantiate(upgradeOptions, overlayCanvas).transform.SetAsLastSibling();
     }
 }
